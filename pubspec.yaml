@@ -1,0 +1,36 @@
+name: flutterstarter
+description: A new Flutter application.
+
+dependencies:
+  google_sign_in: "^3.0.4"
+  firebase_auth: "^0.5.11"
+  path_provider: "^0.4.1"
+  flutter_image: "^1.0.0"
+  sqflite: "^0.9.0"
+  cloud_firestore: "^0.7.3"
+  flutter_cupertino_settings: "^0.0.8"
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+
+flutter:
+
+
+  uses-material-design: true
+  assets:
+    - images/ftt_debrief.png
+    - images/ftt_echo.jpg
+    - images/ftt_gear.jpg
+    - images/ftt_handbook.jpg
+    - images/ftt_prepare.jpg
+    - images/ftt_ship.jpg
+    - images/ftt_shuttle.jpg
+    - images/ftt_sweat.jpg
+    - images/avatar.png
+    - images/flaps.jpg
+    - images/google.png
