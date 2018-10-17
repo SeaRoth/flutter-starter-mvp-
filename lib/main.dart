@@ -3,18 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_image/network.dart';
 import 'package:flutterstarter/data/db/db_helper.dart';
-import 'package:flutterstarter/data/network/firestore_helper.dart';
+import 'package:flutterstarter/data/models/Statistic.dart';
+import 'package:flutterstarter/data/network/firestore/firestore_helper.dart';
 import 'package:flutterstarter/data/network/network_data.dart';
 import 'package:flutterstarter/data/network/user_helper.dart';
 import 'package:flutterstarter/localizations/themes.dart';
 import 'package:flutterstarter/main_presenter.dart';
-import 'package:flutterstarter/tabs/home/screen.dart' as _firstTab;
-import 'package:flutterstarter/tabs/dashboard/screen.dart' as _secondTab;
-import 'package:flutterstarter/tabs/cart/screen.dart' as _thirdTab;
+import 'package:flutterstarter/tabs/home/home_screen.dart' as _firstTab;
+import 'package:flutterstarter/tabs/dashboard/dashboard_screen.dart' as _secondTab;
+import 'package:flutterstarter/tabs/cart/cart_screen.dart' as _thirdTab;
 import './screens/about.dart' as _aboutPage;
 import './screens/support.dart' as _supportPage;
 import './screens/settings.dart' as _settingsPage;
 import './screens/login_screen.dart' as _loginPage;
+import './screens/profile_screen.dart' as _profilePage;
 
 void main() => runApp(new MaterialApp(
   title: 'Flutter MVP Starter',
@@ -31,6 +33,11 @@ void main() => runApp(new MaterialApp(
 
       case '/login': return new FromRightToLeft(
         builder: (_) => new _loginPage.LoginScreen(),
+        settings: settings,
+      );
+
+      case '/profile': return new FromRightToLeft (
+        builder: (_) => new _profilePage.ProfileScreen(),
         settings: settings,
       );
 
@@ -101,11 +108,13 @@ class TabsState extends State<Tabs> implements MainView{
   MainScreenPresenter _presenter;
   var _title_app = null;
   int _tab = 0;
+  dynamic _selection;
 
   @override
   void initState() {
     super.initState();
     _presenter = new MainScreenPresenter(this);
+    _presenter.loadDbNetworkData();
     _presenter.signInSilently();
     _tabController = new PageController();
     this._title_app = TabItems[0].title;
@@ -117,13 +126,54 @@ class TabsState extends State<Tabs> implements MainView{
     _tabController.dispose();
   }
 
+  void setMenuButtonItem(){
+    switch(_selection){
+      case MenuOptionsEnum.populate_users_posts:
+        _firestoreHelper.populateUsers();
+        _firestoreHelper.populatePosts();
+        break;
+      case MenuOptionsEnum.remove_users_posts:
+        break;
+      default:
+        break;
+
+    }
+  }
+
   @override
   Widget build (BuildContext context) => new Scaffold(
 
     //App Bar
     appBar: new AppBar(
+        actions: <Widget>[
+          new PopupMenuButton<MenuOptionsEnum>(
+            onSelected: (MenuOptionsEnum result) {
+              _selection = result;
+              setMenuButtonItem();
+              },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuOptionsEnum>>[
+              const PopupMenuItem<MenuOptionsEnum>(
+                value: MenuOptionsEnum.populate_users_posts,
+                child: const Text('Populate users and posts'),
+              ),
+              const PopupMenuItem<MenuOptionsEnum>(
+                value: MenuOptionsEnum.remove_users_posts,
+                child: const Text('Remove stats'),
+              ),
+              const PopupMenuItem<MenuOptionsEnum>(
+                value: MenuOptionsEnum.selfStarter,
+                child: const Text('Being a self-starter'),
+              ),
+              const PopupMenuItem<MenuOptionsEnum>(
+                value: MenuOptionsEnum.tradingCharter,
+                child: const Text('Placed in charge of trading charter'),
+              ),
+            ],
+          )
+
+        ],
       title: new Text(
-        _title_app, 
+        _title_app,
         style: new TextStyle(
           fontSize: Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
         ),
@@ -132,7 +182,9 @@ class TabsState extends State<Tabs> implements MainView{
     ),
 
     //Content of tabs
-    body: new PageView(
+    body:
+
+    new PageView(
       controller: _tabController,
       onPageChanged: onTabChanged,
       children: <Widget>[
@@ -155,16 +207,21 @@ class TabsState extends State<Tabs> implements MainView{
           );
         }).toList(),
       ):
-      new BottomNavigationBar(
-        currentIndex: _tab,
-        onTap: onTap,
-        items: TabItems.map((TabItem) {
-          return new BottomNavigationBarItem(
-            title: new Text(TabItem.title),
-            icon: new Icon(TabItem.icon),
-          );
-        }).toList(),
+      new Container(
+        height: 46.0,
+        child: new BottomNavigationBar(
+          currentIndex: _tab,
+          iconSize: 14.0,
+          type: BottomNavigationBarType.fixed,
+          onTap: onTap,
+          items: TabItems.map((TabItem) {
+            return new BottomNavigationBarItem(
+              title: new Text(TabItem.title,),
+              icon: new Icon(TabItem.icon,),
+            );
+          }).toList(),
     ),
+      ),
 
     //Drawer
     drawer: new Drawer(
@@ -222,7 +279,8 @@ class TabsState extends State<Tabs> implements MainView{
               :
               new CircleAvatar(
                 backgroundImage: new Image(
-                  image: new NetworkImageWithRetry(_user.photoUrl),).image,
+                  image: new NetworkImageWithRetry(_user.photoUrl),
+                ).image,
                 radius: 12.0,
               ),
               title: new Text(_user == null ? 'Login' : 'Logout'),
@@ -329,6 +387,11 @@ class TabsState extends State<Tabs> implements MainView{
     }else
       _presenter.signInSilently();
   }
+
+  @override
+  void onStatsLoaded(List<Statistic> stats) {
+    // TODO: implement onStatsLoaded
+  }
 }
 
 class TabItem {
@@ -340,5 +403,7 @@ class TabItem {
 const List<TabItem> TabItems = const <TabItem>[
   const TabItem(title: 'Home', icon: Icons.home),
   const TabItem(title: 'Dashboard', icon: Icons.dashboard),
-  const TabItem(title: 'Cart', icon: Icons.shopping_cart)
+  const TabItem(title: 'Chat', icon: Icons.people)
 ];
+
+enum MenuOptionsEnum { populate_users_posts, remove_users_posts, selfStarter, tradingCharter }

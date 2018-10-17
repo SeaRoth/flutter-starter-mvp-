@@ -1,5 +1,6 @@
 import 'package:flutterstarter/data/db/db_helper.dart';
-import 'package:flutterstarter/data/network/firestore_helper.dart';
+import 'package:flutterstarter/data/models/Statistic.dart';
+import 'package:flutterstarter/data/network/firestore/firestore_helper.dart';
 import 'package:flutterstarter/data/network/network_data.dart';
 import 'package:flutterstarter/data/network/user_helper.dart';
 import 'package:path_provider/path_provider.dart';

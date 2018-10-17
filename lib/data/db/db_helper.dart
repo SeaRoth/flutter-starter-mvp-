@@ -12,7 +12,7 @@ class DbHelper {
   final String cartString = "cart";
 
   final Future<Directory> Function() getDirectory;
-  const DbHelper(this.getDirectory,);
+  const DbHelper(this.getDirectory);
 
   Future<File> _getLocalFile(String tag) async {
     final dir = await getDirectory();
@@ -57,11 +57,10 @@ class DbHelper {
   }
 
   //STATS
-  Future<File> saveStats(List<Statistic> list) async {
+  Future saveStats(List<Statistic> list) async {
     if(list == null)
       return null;
     final file = await _getLocalFile(statsString);
-
     return file.writeAsString(new JsonEncoder().convert({
       'stats': list.map((stat) => stat).toList(),
     }));

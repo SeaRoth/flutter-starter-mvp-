@@ -5,7 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image/network.dart';
 import 'package:flutterstarter/data/db/db_helper.dart';
-import 'package:flutterstarter/data/network/firestore_helper.dart';
+import 'package:flutterstarter/data/models/Statistic.dart';
+import 'package:flutterstarter/data/network/firestore/firestore_helper.dart';
 import 'package:flutterstarter/data/network/network_data.dart';
 import 'package:flutterstarter/data/network/user_helper.dart';
 import 'package:flutterstarter/screens/login_presenter.dart';
@@ -32,6 +33,13 @@ class LoginScreenState extends State<LoginScreen> implements LoginScreenView {
     _presenter = new LoginScreenPresenter(this);
     _presenter.loadUser();
     userAvatar = _isLoggedIn ? new Image(image: new NetworkImageWithRetry(_user.photoUrl),).image : new Image.asset('images/flaps.jpg');
+  }
+
+  void _loginFunction(){
+    setState((){
+      _isLoading = true;
+    });
+    _presenter.loginGoogle();
   }
 
   void _signOut() {
@@ -104,7 +112,7 @@ class LoginScreenState extends State<LoginScreen> implements LoginScreenView {
 
                 new ButtonNormal(
                   text: "Creative Login Button",
-                  fn: _aFunction,
+                  fn: _loginFunction,
                   colorBg: Colors.green,
                   colorText: Colors.white,
                 ),
@@ -133,13 +141,6 @@ class LoginScreenState extends State<LoginScreen> implements LoginScreenView {
     );
 
     //return widget;
-  }
-
-  void _aFunction(){
-    setState((){
-      _isLoading = true;
-    });
-    _presenter.loginGoogle();
   }
 
   @override
@@ -181,6 +182,11 @@ class LoginScreenState extends State<LoginScreen> implements LoginScreenView {
   @override
   void onDbNetworkDataLoaded(DbHelper dbHelper, NetworkData networkData, UserHelper userHelper, FirestoreHelper firestoreHelper) {
     // TODO: implement onDbNetworkDataLoaded
+  }
+
+  @override
+  void onStatsLoaded(List<Statistic> stats) {
+    // TODO: implement onStatsLoaded
   }
 
 }

@@ -11,6 +11,12 @@ class LoginScreenPresenter extends ScreenPresenter<LoginScreenView> {
   LoginScreenPresenter(ScreenView view) : super(view);
 
   @override
+  void loadDbNetworkData() {
+    // TODO: implement loadDbNetworkData
+    super.loadDbNetworkData();
+  }
+
+  @override
   void loginGoogle() {
     super.loginGoogle();
   }

@@ -17,7 +17,7 @@ class UserHelper{
   }
 
   UserHelper._helper(){
-    print("opening login helper");
+
   }
 
   GoogleSignIn retGoogleSignIn() {

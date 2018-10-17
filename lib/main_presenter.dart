@@ -25,6 +25,12 @@ class MainScreenPresenter extends ScreenPresenter<MainView> {
   }
 
   @override
+  void loadDbNetworkData() {
+    // TODO: implement loadDbNetworkData
+    super.loadDbNetworkData();
+  }
+
+  @override
   void logout() {
     super.logout();
   }
